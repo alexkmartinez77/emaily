@@ -10,17 +10,21 @@ passport.use(                                   // passport.use tells passport t
         clientID: keys.googleClientID,          // is a public token and id's our app to google servers        
         clientSecret: keys.googleClientSecret,  // is a private key that noone should know about
         callbackURL: '/auth/google/callback'    // the url the user will be redirected to once permisisons are granted by google on their way back from google
-    }, (accessToken) => {                       // callback anonymous fat arrow function
-        console.log(accessToken);               
+    }, 
+    (accessToken, refreshToken, profile, done) => {                       // callback anonymous fat arrow function
+        console.log('access token:', accessToken);  
+        console.log('refresh token:', refreshToken); 
+        console.log('profile:', profile);                                        // executed after google responded with scope info
     })
-);                                        
+);
 
 app.get(
     '/auth/google',
-     passport.authenticate('google', {          // 'google' is created by new GoogleStrategy
-         scope: ['profile', 'email']              //// we are asking google to give us access to the users profile info and email scopes
-     }));
-      
+    passport.authenticate('google', {            // 'google' is created by new GoogleStrategy
+        scope: ['profile', 'email']              // we are asking google to give us access to the users profile info and email scopes
+    }));
+
+app.get('/auth/google/callback', passport.authenticate('google')); //passport strategy saw the code in the URL after being reirected back to our server from google, and authomatically made followup request with google with the userID provided, google responds with the scopr info requested (profile, email)
 //route handler example
 // app.get('/', (req, res) => {             // lines 4-6 represent a route handler
 //     res.send({hi: 'bye buddy'});
