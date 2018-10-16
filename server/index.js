@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('./services/passport'); //not assigned to a variabe like const passport because we are not returning anyting, we just want the code to be available
 const keys = require('./config/keys');
+require('./services/passport'); //not assigned to a variabe like const passport because we are not returning anyting, we just want the code to be available
+require('./models/User');
 
 mongoose.connect(keys.mongoURI); // we pass the address of the mongoose instance created through mlab
 
