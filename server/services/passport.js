@@ -1,6 +1,6 @@
 const passport = require('passport');       //a library that gives EXPRESS the idea of how to handle authentication
 const GoogleStrategy = require('passport-google-oauth20').Strategy; //gives EXPRESS the strategy of how to handle authentication for google specifically; we only want strategy out of this module
-const keys = require('../config/keys');
+const keys = require('../config/keys'); // since password and login info is part of the path we hide them in config/keys.js
 
 
 passport.use(                                   // passport.use tells passport that there is a new strategy that we want it to use other than the default
