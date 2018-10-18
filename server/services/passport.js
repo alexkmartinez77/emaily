@@ -5,6 +5,17 @@ const keys = require('../config/keys'); // since password and login info is part
 
 const User = mongoose.model('users');   //pulls the schema out of mongoose with just one argument, 'users'
 
+passport.serializeUser((user, done) => { //we are going to define a function and pass it to serializeUser, done is a callback function
+    done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+    User.findById(id)
+        .then(user => {
+            done(null, user);
+        })
+});
+
 passport.use(                                   // passport.use tells passport that there is a new strategy that we want it to use other than the default
     new GoogleStrategy({                        // new GoogleStrategy creates a new instance of Google passport Strategy and will be identified as 'google'
         clientID: keys.googleClientID,          // is a public token and id's our app to google servers        
@@ -21,7 +32,7 @@ passport.use(                                   // passport.use tells passport t
                         //we don't have a user record with this ID, so make one
                         new User({ googleId: profile.id })                           //creating a model instance, .save will save it to the database
                             .save()
-                            .then(user => done(null, user));                                //user is the user that was just saved
+                            .then(user => { done(null, user) });                                //user is the user that was just saved
                     }
                 })
         }
