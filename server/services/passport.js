@@ -3,7 +3,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy; //gives EXPR
 const mongoose = require('mongoose');
 const keys = require('../config/keys'); // since password and login info is part of the path we hide them in config/keys.js
 
-const User = mongoose.model('users');   //pulls the schema out of mongoose with just one argument
+const User = mongoose.model('users');   //pulls the schema out of mongoose with just one argument, 'users'
 
 passport.use(                                   // passport.use tells passport that there is a new strategy that we want it to use other than the default
     new GoogleStrategy({                        // new GoogleStrategy creates a new instance of Google passport Strategy and will be identified as 'google'
@@ -12,8 +12,18 @@ passport.use(                                   // passport.use tells passport t
         callbackURL: '/auth/google/callback'    // the url the user will be redirected to once permisisons are granted by google on their way back from google
     },
         (accessToken, refreshToken, profile, done) => {                       // callback anonymous fat arrow function
-            console.log(profile);
-           new User({googleId: profile.id}).save()                           //creating a model instance, .save will save it to the database
+            User.findOne({ googleId: profile.id })                            // this query returns a promise
+                .then((existingUser) => {
+                    if (existingUser) {
+                        //we already have a record with the given profilfe ID, so do nothing
+                        done(null, existingUser); // null means there is no error, 2nd argument is the user record
+                    } else {
+                        //we don't have a user record with this ID, so make one
+                        new User({ googleId: profile.id })                           //creating a model instance, .save will save it to the database
+                            .save()
+                            .then(user => done(null, user));                                //user is the user that was just saved
+                    }
+                })
         }
     )
 );
