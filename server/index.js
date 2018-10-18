@@ -1,12 +1,24 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const keys = require('./config/keys');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
 require('./models/User');
 require('./services/passport'); //not assigned to a variabe like const passport because we are not returning anyting, we just want the code to be available
 
 mongoose.connect(keys.mongoURI); // we pass the address of the mongoose instance created through mlab
 
 const app = express();
+
+app.use(
+    cookieSession({                       //cookie takes two arguments maxAge and keys
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        keys: [keys.cookieKey]            //its an array in case you want to use multiple keys
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 require('./routes/authRoutes')(app);               //passing the app object created by const app = express(), to the function authroutes that we created and imported
 
