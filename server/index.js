@@ -10,6 +10,7 @@ mongoose.connect(keys.mongoURI); // we pass the address of the mongoose instance
 
 const app = express();
 
+//////////////////////////////////////////////////MIDDLEWARE used for every incoming request before entering the route handlers?/////////
 app.use(
     cookieSession({                       //cookieSession helps express handle cookies, cookie takes two arguments maxAge and keys
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -19,6 +20,7 @@ app.use(
 
 app.use(passport.initialize());            //these two functions tell passport to use cookies to handle authentication
 app.use(passport.session()); 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 require('./routes/authRoutes')(app);         //passing the app object created by const app = express(), to the function authroutes that we created and imported
 
