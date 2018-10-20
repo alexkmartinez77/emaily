@@ -22,7 +22,8 @@ passport.use(                                   // passport.use tells passport t
     new GoogleStrategy({                        // new GoogleStrategy creates a new instance of Google passport Strategy and will be identified as 'google'
         clientID: keys.googleClientID,          // is a public token and id's our app to google servers        
         clientSecret: keys.googleClientSecret,  // is a private key that noone should know about
-        callbackURL: '/auth/google/callback'    // the url the user will be redirected to once permisisons are granted by google on their way back from google
+        callbackURL: '/auth/google/callback',   // the url the user will be redirected to once permisisons are granted by google on their way back from google
+        proxy: true
     },
         (accessToken, refreshToken, profile, done) => {                       // run this google strategy callback anonymous fat arrow function once we receive the profile and email
             User.findOne({ googleId: profile.id })                            // this query returns a promise
